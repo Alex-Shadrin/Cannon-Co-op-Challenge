@@ -5,42 +5,72 @@ using UnityEngine;
 public class Gun : MonoBehaviour
 {
     public GameObject BulletPrefab;
-
-    public float Power = 100;
-
+    public float ShotPower = 100;
+    public float RecoilPower = 5;
     public TrajectoryRenderer Trajectory;
 
-    private Camera mainCamera;
+    private Camera _mainCamera;
+    private Vector3 _shotDirection;
+    private Rigidbody _rb;
+    private bool _isReloading = false;
 
     private void Start()
     {
-        mainCamera = Camera.main;
+        _mainCamera = Camera.main;
     }
 
-    int countBullets = 0;
+    void Awake()
+    {
+        _rb = gameObject.GetComponent<Rigidbody>();
+    }
+
+    private readonly Queue<GameObject> _bullets = new();
+
     private void Update()
     {
-        float enter;
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        new Plane(-Vector3.forward, transform.position).Raycast(ray, out enter);
+        var trackingPosition = Input.mousePosition;
+
+        Ray ray = _mainCamera.ScreenPointToRay(trackingPosition);
+        new Plane(-Vector3.forward, transform.position).Raycast(ray, out var enter);
         Vector3 mouseInWorld = ray.GetPoint(enter);
+        Debug.Log(ray);
 
-        Vector3 speed = (mouseInWorld - transform.position) * Power;
-        transform.rotation = Quaternion.LookRotation(speed);
-        Trajectory.ShowTranjectory(transform.position, speed);
+        _shotDirection = (mouseInWorld - transform.position);
 
-        
+        //transform.rotation = Quaternion.LookRotation(speed);
+        Trajectory.ShowTranjectory(transform.position, _shotDirection * ShotPower);
+
+
         if (Input.GetMouseButtonDown(0))
         {
-            Rigidbody bullet = Instantiate(BulletPrefab, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            countBullets +=1;
-            bullet.AddForce(speed, ForceMode.VelocityChange);
-
-            if(countBullets >= 5)
-            {
-                Destroy(bullet);
-                countBullets = 0;
-            }
+            if(!_isReloading)
+                StartCoroutine(Fire());
         }
+    }
+
+    public IEnumerator Fire()
+    {
+        var bullet = Instantiate(BulletPrefab, transform.position, Quaternion.identity);
+        _bullets.Enqueue(bullet);
+
+        bullet.GetComponent<Rigidbody>()
+            .AddForce(_shotDirection * ShotPower, ForceMode.VelocityChange);
+
+        if (_bullets.Count >= 5)
+        {
+            Destroy(_bullets.Dequeue());
+        }
+
+        var recoilDirection = new Vector3(
+            _shotDirection.x * -1,
+            _shotDirection.y * -1,
+            _shotDirection.z
+        );
+
+        _rb.AddForce(recoilDirection * RecoilPower);
+
+        _isReloading = true;
+        yield return new WaitForSeconds(1);
+        _isReloading = false;
     }
 }
