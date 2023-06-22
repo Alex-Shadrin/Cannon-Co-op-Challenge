@@ -25,7 +25,7 @@ public class TurretControl : MonoBehaviour
         if (_distanc <= Disabled)
         {
             transform.rotation = Quaternion.LookRotation(speed);
-            StartCoroutine(gun.Fire());
+            //StartCoroutine(gun.Fire());
         }
     }
 }
