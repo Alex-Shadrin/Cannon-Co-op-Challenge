@@ -33,9 +33,9 @@ public class Gun : MonoBehaviour
         Ray ray = _mainCamera.ScreenPointToRay(trackingPosition);
         new Plane(-Vector3.forward, transform.position).Raycast(ray, out var enter);
         Vector3 mouseInWorld = ray.GetPoint(enter);
-        Debug.Log(ray);
+        //Debug.Log(ray);
 
-        _shotDirection = (mouseInWorld - transform.position);
+        _shotDirection = (mouseInWorld - transform.position).normalized;
 
         //transform.rotation = Quaternion.LookRotation(speed);
         Trajectory.ShowTranjectory(transform.position, _shotDirection * ShotPower);
