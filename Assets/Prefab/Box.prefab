@@ -147,9 +147,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80e0ed43e3d189c45acb16855cc9f4aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  underAcidDrag: 3
-  underAcidAngulariDrag: 1
-  airDrag: 0
-  airAngulariDrag: 0.05
-  floatingPower: 50
-  acidHigth: 0
+  UnderWaterDrag: 3
+  UnderWaterAngulariDrag: 1
+  AirDrag: 0
+  AirAngulariDrag: 0.05
+  FloatingPower: 100
+  isUnderWater: 0
+  difference: 0

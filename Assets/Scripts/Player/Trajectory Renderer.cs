@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(LineRenderer))]
 public class TrajectoryRenderer : MonoBehaviour
 {
     private LineRenderer lineRendererComponent;
