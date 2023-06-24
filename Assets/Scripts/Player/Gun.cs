@@ -17,7 +17,7 @@ public class Gun : MonoBehaviour
     [SerializeField] private float MinCooldownDurationSec = 2f;
     [SerializeField] private float MaxCooldownDurationSec = 4f;
 
-    [SerializeField] private TrajectoryRenderer Trajectory;
+    [SerializeField] private Trajectory Trajectory;
     [SerializeField] private Rigidbody PlayerRigidBody;
     [SerializeField] private ButtonHolder ButtonHolder;
 
@@ -38,8 +38,18 @@ public class Gun : MonoBehaviour
     private void OnFireButtonIsHeld(float heldTime)
     {
         var sp = CalculateShootPower(heldTime);
-        if(!_isReloading)
-            Trajectory.ShowTranjectory(transform.position, _shotDirection * sp);
+        if (!_isReloading)
+        {
+            Trajectory.Show(transform.position, _shotDirection * sp);
+
+        }
+    }
+    private void OnFireButtonHoldComplete(float heldTime)
+    {
+        Trajectory.Hide();
+        var sp = CalculateShootPower(heldTime);
+        if (!_isReloading)
+            StartCoroutine(Fire(sp));
     }
 
     private float CalculateShootPower(float heldTime)
@@ -63,12 +73,7 @@ public class Gun : MonoBehaviour
 
         return cooldown;
     }
-    private void OnFireButtonHoldComplete(float heldTime)
-    {
-        var sp = CalculateShootPower(heldTime);
-        if (!_isReloading)
-            StartCoroutine(Fire(sp));
-    }
+   
 
     private readonly Queue<GameObject> _bullets = new();
 

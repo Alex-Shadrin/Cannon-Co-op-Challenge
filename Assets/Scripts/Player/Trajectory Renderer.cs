@@ -1,16 +1,23 @@
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class TrajectoryRenderer : MonoBehaviour
+public class Trajectory : MonoBehaviour
 {
     private LineRenderer lineRendererComponent;
 
     private void Start()
     {
         lineRendererComponent = GetComponent<LineRenderer>();
+        lineRendererComponent.enabled = false;
+        lineRendererComponent.useWorldSpace = false;
     }
-    
-    public void ShowTranjectory(Vector3 origin, Vector3 speed)
+    public void Hide()
+    {
+        lineRendererComponent.enabled = false;
+        lineRendererComponent.useWorldSpace = false;
+    }
+
+    public void Show(Vector3 origin, Vector3 speed)
     {
         Vector3[] points = new Vector3[100];
         lineRendererComponent.positionCount = points.Length;
@@ -29,5 +36,7 @@ public class TrajectoryRenderer : MonoBehaviour
         }
 
         lineRendererComponent.SetPositions(points);
+        lineRendererComponent.enabled = true;
+        lineRendererComponent.useWorldSpace = true;
     }
 }

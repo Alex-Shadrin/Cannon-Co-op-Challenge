@@ -19,12 +19,12 @@ public class TurretControl : MonoBehaviour
 
     private void Update()
     {
-        _distanc = Vector3.Distance(_player.position, transform.position);
+        //_distanc = Vector3.Distance(_player.position, transform.position);
 
-        Vector3 speed = (_player.position - transform.position);
-        if (_distanc <= Disabled)
-        {
-            transform.rotation = Quaternion.LookRotation(speed);
-        }
+        //Vector3 speed = (_player.position - transform.position);
+        //if (_distanc <= Disabled)
+        //{
+        //    transform.rotation = Quaternion.LookRotation(speed);
+        //}
     }
 }

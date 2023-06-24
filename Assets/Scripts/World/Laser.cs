@@ -43,7 +43,7 @@ public class Laser : MonoBehaviour
 
         if (cast && hit.collider.gameObject.TryGetComponent<Health>(out var health))
         {
-            health.TakeHit(1);
+            health.TakeHit(10);
         }
 
         _hitParticles.transform.position = hitPosition;
