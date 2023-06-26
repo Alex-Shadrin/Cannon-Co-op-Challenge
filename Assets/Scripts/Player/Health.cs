@@ -34,7 +34,6 @@ public class Health : MonoBehaviour
         {
             health = 0;
             OnDeath?.Invoke();
-            
         }
     }
 
