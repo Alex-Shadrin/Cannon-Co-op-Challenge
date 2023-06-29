@@ -6,6 +6,9 @@ public class MPPlayerController : NetworkBehaviour
 
     public void Update()
     {
+        //Debug.Log("Is owner: " + IsOwner);
+        //if (!IsOwner)
+        //    TryTurnOffControls();
     }
 
     public override void OnNetworkSpawn()

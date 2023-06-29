@@ -4,27 +4,53 @@ using UnityEngine;
 
 public class TurretControl : MonoBehaviour
 {
-    public float Disabled;
     public Transform Gun;
     public GameObject BulletPrefab;
+    public float Disabled;
+    public float RotSpeed;
 
-    private Gun gun;
-    Transform _player;
+    private bool _isReloading = false;
+
     float _distanc;
+    Transform _player;
     private void Start()
     {
-        gun = GetComponent<Gun>();
         _player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
+
     private void Update()
     {
-        //_distanc = Vector3.Distance(_player.position, transform.position);
+        if (_player == null) return;
+        _distanc = Vector3.Distance(_player.position, transform.position);
 
-        //Vector3 speed = (_player.position - transform.position);
-        //if (_distanc <= Disabled)
-        //{
-        //    transform.rotation = Quaternion.LookRotation(speed);
-        //}
+        Vector3 speed = (_player.position - transform.position);
+        if (_distanc <= Disabled)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(_player.position - transform.position), RotSpeed * Time.deltaTime);
+
+            if (!_isReloading)
+            {
+                StartCoroutine(Shoot());
+            }
+        }
     }
+
+    private readonly Queue<GameObject> _bullets = new();
+    private IEnumerator Shoot()
+    {
+        var bullet = Instantiate(BulletPrefab,Gun.position, Quaternion.identity);
+        _bullets.Enqueue(bullet);
+        bullet.GetComponent<Rigidbody>().AddForce(Gun.forward * 1500);
+
+        if (_bullets.Count >= 5)
+        {
+            Destroy(_bullets.Dequeue());
+        }
+
+        _isReloading = true;
+        yield return new WaitForSeconds(1);
+        _isReloading = false;
+    }
+
 }
