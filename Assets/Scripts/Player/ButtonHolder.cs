@@ -18,7 +18,7 @@ public class ButtonHolder : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("hold update");
+        //Debug.Log("hold update");
 
         if (!Enabled) return;
 

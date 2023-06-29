@@ -6,7 +6,8 @@ public class Float : MonoBehaviour
 {
     [SerializeField] private float Depth = 50f;
     [SerializeField] private float Byonancy = 0.1f;
-
+    [SerializeField] private GameObject Splashes;
+    
     // private List<GameObject> _colliding = new();
     //private void FixedUpdate()
     //{
@@ -19,8 +20,10 @@ public class Float : MonoBehaviour
     //        }
     //    }
     //}
+
     private void OnTriggerEnter(Collider collision)
     {
+        Instantiate(Splashes, collision.transform.position, Quaternion.LookRotation(collision.transform.up));
         Debug.Log("FloatEnterCollision");
         var collidingObject = collision.gameObject;
         if (collidingObject.TryGetComponent<Floatable>(out var floatable))

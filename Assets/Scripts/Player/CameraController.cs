@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
     public Vector3 Offset;
     public float smoothSpeed = 0.125f;
     public float CameraSpeed = 1f;
-    public float ZoomSpeed;
+    //public float ZoomSpeed;
 
     private void Start()
     {
@@ -22,7 +22,7 @@ public class CameraController : MonoBehaviour
 
     private void OnDeath()
     {
-        //StartCoroutine(Shake(.15f, .4f));
+        StartCoroutine(Shake(.15f, .4f));
     }
     void FixedUpdate()
     {
@@ -35,20 +35,20 @@ public class CameraController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Target.position - transform.position), CameraSpeed * Time.deltaTime);
     }
 
-    //public IEnumerator Shake(float duration, float magnitude )
-    //{
-    //    Vector3 originalPositon = transform.localPosition;
-    //    float elapsed = 0.0f;
-    //    while(elapsed > duration)
-    //    {
-    //        float x = Random.Range(-1f, 1f) * magnitude;
-    //        float y = Random.Range(-1f, 1f) * magnitude;
+    public IEnumerator Shake(float duration, float magnitude)
+    {
+        Vector3 originalPositon = transform.localPosition;
+        float elapsed = 0.0f;
+        while (elapsed > duration)
+        {
+            float x = Random.Range(-1f, 1f) * magnitude;
+            float y = Random.Range(-1f, 1f) * magnitude;
 
-    //        transform.localPosition = new Vector3(x, y, originalPositon.z);
+            transform.localPosition = new Vector3(x, y, originalPositon.z);
 
-    //        elapsed += Time.deltaTime;
-    //        yield return null;
-    //    }
-    //    transform.localPosition = originalPositon;
-    //}
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.localPosition = originalPositon;
+    }
 }
