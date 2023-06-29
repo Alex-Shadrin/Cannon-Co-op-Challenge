@@ -19,9 +19,11 @@ public class CloseBox : MonoBehaviour
     {
         this.OnEnd += Player_OnEnd;
     }
-    private void Player_OnEnd()
+    private async void Player_OnEnd()
     {
-        gameManager.GameOver();
+        await SimpleLevelManager.Instance.LoadLevelAsync(
+            SimpleLevelManager.Instance.CurrentLevel.Next
+        );
     }
     private void OnDestroy()
     {

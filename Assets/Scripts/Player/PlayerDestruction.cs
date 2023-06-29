@@ -1,16 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
+[RequireComponent (typeof(Collider))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerDestruction : MonoBehaviour
 {
+    [SerializeField] private bool ShouldDestroyGameObject;
     [SerializeField] private Health health;
-    [SerializeField] private GameObject _explosion;
-    public GameObject destroyedVersion;
-    public Transform PlayerTransform;
-
+    [SerializeField] private GameObject explosion;
+    [SerializeField] private GameObject destroyedVersion;
+    
+    private Collider _playerColider;
+    private Rigidbody _rigidbody;
+    private Transform[] childern;
     private void Start()
     {
+        _playerColider = GetComponent<Collider>();
+        var self = gameObject.transform;
+        childern = Enumerable.Range(0, self.childCount).Select(i => self.GetChild(i)).ToArray();
+
+        _rigidbody = GetComponent<Rigidbody>();
         health.OnDeath += OnDeath;
     }
     private void OnDestroy()
@@ -19,8 +28,10 @@ public class PlayerDestruction : MonoBehaviour
     }
     private void OnDeath()
     {
-        Instantiate(_explosion, transform.position, Quaternion.identity);
-        var replacement = Instantiate(destroyedVersion, PlayerTransform.position, PlayerTransform.rotation);
+        var playerTransform = gameObject.transform;
+
+        Instantiate(explosion, playerTransform.position, Quaternion.identity);
+        var replacement = Instantiate(destroyedVersion, playerTransform.position, playerTransform.rotation);
 
         var rbs = replacement.GetComponentsInChildren<Rigidbody>();
         foreach (var rb in rbs)
@@ -28,6 +39,16 @@ public class PlayerDestruction : MonoBehaviour
             rb.AddExplosionForce(100f, destroyedVersion.transform.position, 5f);
         }
 
-        Destroy(gameObject);
+        // turning off collider rigidbody physics and underlying meshes
+        _playerColider.enabled = false;
+        _rigidbody.useGravity = false;
+        _rigidbody.isKinematic = true;
+        foreach (var child in childern)
+        {
+            child.gameObject.SetActive(false);
+        }
+
+        if (ShouldDestroyGameObject)
+            Destroy(gameObject, 1);
     }
 }

@@ -18,8 +18,6 @@ public class ButtonHolder : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log("hold update");
-
         if (!Enabled) return;
 
         if (Input.GetMouseButtonDown(ButtonKeyCode))

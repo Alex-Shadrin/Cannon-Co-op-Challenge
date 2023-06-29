@@ -41,7 +41,6 @@ public class Gun : MonoBehaviour
         if (!_isReloading)
         {
             Trajectory.Show(transform.position, _shotDirection * sp);
-
         }
     }
     private void OnFireButtonHoldComplete(float heldTime)
@@ -74,14 +73,34 @@ public class Gun : MonoBehaviour
         return cooldown;
     }
    
-
     private readonly Queue<GameObject> _bullets = new();
 
-    private void Update()
+    private Camera _camera;
+
+    private async void Awake()
     {
+        _camera = await CameraHelper.AwaitMainCamera();
+    }
+    private async void Update()
+    {
+        if (this.gameObject == null)
+            return;
+
+        if (_camera == null)
+            _camera = await CameraHelper.AwaitMainCamera();
+
         var trackingPosition = Input.mousePosition;
-        Ray ray = Camera.main.ScreenPointToRay(trackingPosition);
-        new Plane(-Vector3.forward, transform.position).Raycast(ray, out var enter);
+        Ray ray = new Ray();
+        float enter = 0;
+        try
+        {
+            ray = _camera.ScreenPointToRay(trackingPosition);
+            new Plane(-Vector3.forward, transform.position).Raycast(ray, out enter);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+        }
         Vector3 mouseInWorld = ray.GetPoint(enter);
         _shotDirection = (mouseInWorld - transform.position).normalized;
     }
@@ -112,7 +131,7 @@ public class Gun : MonoBehaviour
         var cooldownTime = CalculateCooldownTime(shotPower);
 
 
-        Debug.Log("Shoot! Power: " + shotPower + "Cooldown: " + cooldownTime);
+        Debug.Log("Shoot! Power: " + shotPower + " Cooldown: " + cooldownTime);
         _isReloading = true;
         yield return new WaitForSeconds(cooldownTime);
         _isReloading = false;
