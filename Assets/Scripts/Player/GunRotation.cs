@@ -1,21 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GunRotation : MonoBehaviour
 {
-    private Camera _mainCamera;
+    private Camera _camera;
 
-    private void Start()
+    private async void Start()
     {
-        _mainCamera = Camera.main;
+        _camera = await CameraHelper.AwaitMainCamera();
     }
 
-    void FixedUpdate()
+    async void FixedUpdate()
     {
+        if(_camera == null)
+            _camera = await CameraHelper.AwaitMainCamera();
+
         var trackingPosition = Input.mousePosition;
 
-        Ray ray = _mainCamera.ScreenPointToRay(trackingPosition);
+        Ray ray = _camera.ScreenPointToRay(trackingPosition);
         new Plane(-Vector3.forward, transform.position).Raycast(ray, out var enter);
         Vector3 mouseInWorld = ray.GetPoint(enter);
 
